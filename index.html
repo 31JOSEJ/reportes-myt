@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYT | Control Técnico de Mantenimiento y Engrase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #090d16;
+      --panel-bg: rgba(18, 26, 43, 0.88);
+      --card-bg: rgba(26, 38, 64, 0.65);
+      --card-hover: rgba(33, 49, 82, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: #3b82f6;
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --brand-blue: #2563eb;
+      --brand-cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --success: #10b981;
+      --wa-green: #25d366;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    body {
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+                  linear-gradient(180deg, #090d16 0%, #05080f 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 15px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 940px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header Corporativo de Alta Gama */
+    .top-header {
+      padding: 24px 32px;
+      background: linear-gradient(90deg, rgba(30, 58, 138, 0.45) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
+      font-size: 22px;
+    }
+
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Barra de Pasos / Wizard */
+    .wizard-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 16px 32px;
+      background: rgba(10, 15, 26, 0.6);
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 12px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: all 0.25s ease;
+    }
+
+    .step-item.active { opacity: 1; }
+    .step-item.completed { opacity: 0.85; }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1.5px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .step-item.active .step-num {
+      background: var(--brand-blue);
+      border-color: #60a5fa;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+    }
+
+    .step-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    /* Cuerpo del Formulario */
+    .form-container {
+      padding: 32px;
+      min-height: 480px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: stepFade 0.3s ease; }
+
+    @keyframes stepFade {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .tab-heading {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media(max-width: 720px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .wizard-nav { display: none; } }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #cbd5e1;
+      letter-spacing: 0.3px;
+    }
+
+    input, select, textarea {
+      background: rgba(13, 20, 36, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      background: rgba(18, 28, 48, 0.9);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    select option { background: #0f172a; color: #fff; }
+
+    /* Tarjetas Interactivas de Checkboxes */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media(max-width: 640px) { .checklist-grid { grid-template-columns: 1fr; } }
+
+    .check-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .check-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .check-card input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand-blue);
+      cursor: pointer;
+    }
+
+    .check-card span {
+      font-size: 13.5px;
+      color: #e2e8f0;
+      line-height: 1.4;
+    }
+
+    /* Módulo de Firma de Alta Definición */
+    .sig-wrapper {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 8px;
+      margin-top: 10px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 200px;
+      background: #ffffff;
+      border-radius: 10px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .sig-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      padding: 0 4px;
+    }
+
+    .btn-clear-sig {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-clear-sig:hover { background: rgba(239, 68, 68, 0.25); color: #fff; }
+
+    /* Barra Inferior y Botones */
+    .wizard-footer {
+      padding: 20px 32px;
+      background: rgba(10, 15, 26, 0.7);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.14); color: #fff; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-blue), #1d4ed8);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45); }
+
+    .btn-sheets {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .btn-sheets:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45); }
+
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #16a34a, #25d366);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+    }
+    .btn-whatsapp:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45); }
+
+    .alert-banner {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .alert-banner.success { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .alert-banner.loading { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  
+  <!-- Encabezado Corporativo MYT -->
+  <div class="top-header">
+    <div class="brand-group">
+      <div class="brand-icon">⚙️</div>
+      <div class="brand-text">
+        <h1>Soluciones e Ingeniería MYT</h1>
+        <p>Mantenimiento y Maquinaria Pesada</p>
+      </div>
+    </div>
+    <div class="badge-code">CÓDIGO: FR:GM-01</div>
+  </div>
+
+  <!-- Navegación por Pasos (Wizard) -->
+  <div class="wizard-nav">
+    <div class="step-item active" onclick="irAlPaso(1)">
+      <div class="step-num">1</div>
+      <div class="step-title">Equipo</div>
+    </div>
+    <div class="step-item" onclick="irAlPaso(2)">
+      <div class="step-num">2</div>
+      <div class="step-title">Inspección</div>
+    </div>
+    <div class="step-item" onclick="irAlPaso(3)">
+      <div class="step-num">3</div>
+      <div class="step-title">Rutina PM</div>
+    </div>
+    <div class="step-item" onclick="irAlPaso(4)">
+      <div class="step-num">4</div>
+      <div class="step-title">Engrase & Firma</div>
+    </div>
+  </div>
+
+  <form id="formularioMantenimiento" onsubmit="event.preventDefault()">
+    <div class="form-container">
+
+      <!-- PASO 1: IDENTIFICACIÓN (Hoja 1) -->
+      <div class="tab-content active" id="paso1">
+        <div class="tab-heading"><span>📋</span> Paso 1: Identificación del Equipo y Personal</div>
+        <div class="tab-desc">Complete los datos de cabecera y horómetro del equipo antes de iniciar la intervención.</div>
+
+        <div class="grid-3">
+          <div class="input-field">
+            <label>Fecha de Intervención</label>
+            <input type="date" id="fecha" required>
+          </div>
+          <div class="input-field">
+            <label>Hora</label>
+            <input type="time" id="hora" required>
+          </div>
+          <div class="input-field">
+            <label>Mecánico Responsable</label>
+            <input type="text" id="mecanico" placeholder="Nombre completo" required>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="input-field">
+            <label>Tipo de Maquinaria</label>
+            <select id="tipoEquipo" onchange="renderizarEngrase()">
+              <option value="Excavadoras y Tractores">Excavadoras / Tractores</option>
+              <option value="Camiones">Camiones / Volquetas</option>
+              <option value="Vibrocompactadores">Vibrocompactadores</option>
+              <option value="Motoniveladora y Retroexcavadoras">Motoniveladora / Retro</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label>Marca</label>
+            <input type="text" id="marca" placeholder="Ej: Caterpillar" required>
+          </div>
+          <div class="input-field">
+            <label>Modelo</label>
+            <input type="text" id="modelo" placeholder="Ej: 320D, D6T" required>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="input-field">
+            <label>Horómetro Actual (Horas)</label>
+            <input type="number" id="horometro" placeholder="Ej: 2450" required>
+          </div>
+          <div class="input-field">
+            <label>Frecuencia de Mantenimiento</label>
+            <select id="tipoPm">
+              <option value="PMA (250 - 300 H)">PMA (250 - 300 Horas)</option>
+              <option value="PMB (500 - 600 H)">PMB (500 - 600 Horas)</option>
+              <option value="PMC (750 - 900 H)">PMC (750 - 900 Horas)</option>
+              <option value="PMD (1800 H / 6 Meses)">PMD (1800 Horas / 6 Meses)</option>
+              <option value="PMG (2000 H / Anual)">PMG (2000 Horas / Anual)</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label>Asignación</label>
+            <select id="asignacion">
+              <option>A</option><option>B</option><option>C</option><option>D</option>
+              <option>E</option><option>F</option><option>G</option><option>H</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-field">
+            <label>Serie de Chasis / Equipo</label>
+            <input type="text" id="serieEquipo" placeholder="N° de Serie">
+          </div>
+          <div class="input-field">
+            <label>Motor y Serie de Motor</label>
+            <input type="text" id="serieMotor" placeholder="Modelo / N° Serie Motor">
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2: INSPECCIÓN Y LAVADO (Hoja 1) -->
+      <div class="tab-content" id="paso2">
+        <div class="tab-heading"><span>🔍</span> Paso 2: Lavado e Inspección Pre-Operacional</div>
+        <div class="tab-desc">Verifique los componentes críticos y el estado general de la máquina antes del servicio.</div>
+
+        <div class="checklist-grid">
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Lavado de radiador y equipo con cuidado de ECM">
+            <span>Lavado general de radiador y equipo (proteger ECMs de humedad)</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Limpieza de tablero con silicona y hermeticidad de cabina">
+            <span>Limpieza de tablero con silicona y revisión de cabina</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Luces generales, pito, alarma retroceso y baterías">
+            <span>Luces de trabajo, pito, alarma de retroceso y bornes de batería</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Correas de ventilador, alternador y arranque">
+            <span>Correas del fan/ventilador, alternador y motor de arranque</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Fugas en compartimiento de motor y bombas">
+            <span>Compartimiento de motor y bombas hidráulicas sin fugas</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Mangueras y fittings de grasa en buen estado">
+            <span>Mangueras hidráulicas y fittings de lubricación sin roturas</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Estructura, bastidores, rodillos y cadenas/llantas">
+            <span>Bastidores, rodillos, tren de rodaje / llantas sin fisuras</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="inspeccion" value="Aditamentos (balde, cuchillas, ripper)">
+            <span>Aditamentos de corte: cucharón, cuchillas y ripper</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- PASO 3: RUTINA PM (Hoja 2 compacta) -->
+      <div class="tab-content" id="paso3">
+        <div class="tab-heading"><span>🛢️</span> Paso 3: Protocolo de Mantenimiento Preventivo (PM)</div>
+        <div class="tab-desc">Marque los fluidos, muestras de aceite y filtros reemplazados en este servicio.</div>
+
+        <div class="checklist-grid">
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Cambio de aceite y filtro de motor + toma de muestra">
+            <span>Cambio de aceite y filtro de motor (toma de muestra analítica)</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Reemplazo de filtros de combustible (primario y separador)">
+            <span>Filtros de combustible primario y filtro separador de agua</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Filtros de admisión de aire motor 1 y 2">
+            <span>Filtros de admisión de aire del motor (primario y secundario)</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Filtros de aire acondicionado y cabina">
+            <span>Filtro de aire acondicionado y filtro de cabina</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Nivel de fluidos de mandos, diferencial, caja y giro">
+            <span>Nivel de aceites de mandos finales, diferencial, caja y giro</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Filtros hidráulicos, transmisión, retorno y piloto">
+            <span>Filtros hidráulicos de retorno, piloto y transmisión (PMD / PMG)</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Refrigerante y limpieza de respiraderos">
+            <span>Nivel de refrigerante y limpieza de respiraderos generales</span>
+          </label>
+          <label class="check-card">
+            <input type="checkbox" name="tareasPm" value="Calibración de motor y balancines (PMG 2000H)">
+            <span>Calibración de motor y varillas impulsadoras (si aplica a PMG)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- PASO 4: ENGRASE Y FIRMA (Hoja 3) -->
+      <div class="tab-content" id="paso4">
+        <div class="tab-heading"><span>✍️</span> Paso 4: Puntos de Engrase y Firma del Técnico</div>
+        <div class="tab-desc">Verifique los puntos de lubricación y selle la orden dibujando su firma en el panel digital.</div>
+
+        <label style="margin-bottom: 8px; display: block;">Puntos de Engrase para el Equipo Seleccionado:</label>
+        <div class="checklist-grid" id="contenedorEngrase"></div>
+
+        <div class="input-field" style="margin-top: 20px;">
+          <label>Actividades pendientes para el próximo PM / Observaciones de Campo</label>
+          <textarea id="observaciones" rows="3" placeholder="Indique si quedan repuestos pendientes, mangueras observadas o recomendaciones..."></textarea>
+        </div>
+
+        <div class="input-field">
+          <label>Firma Digital del Mecánico Responsable (Dibujar con el dedo o ratón)</label>
+          <div class="sig-wrapper">
+            <canvas id="signatureCanvas"></canvas>
+            <div class="sig-footer">
+              <span style="font-size: 11px; color: var(--text-dim);">Trazo capturado vectorialmente en alta resolución</span>
+              <button type="button" class="btn-clear-sig" onclick="limpiarFirma()">Limpiar Firma</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="alertBanner" class="alert-banner"></div>
+      </div>
+
+    </div>
+
+    <!-- Barra Inferior de Navegación -->
+    <div class="wizard-footer">
+      <button type="button" class="btn-action btn-secondary" id="btnAnterior" onclick="retrocederPaso()" style="display: none;">
+        ← Anterior
+      </button>
+
+      <div style="display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap;">
+        <!-- Botón de Siguiente para los primeros 3 pasos -->
+        <button type="button" class="btn-action btn-primary" id="btnSiguiente" onclick="avanzarPaso()">
+          Siguiente →
+        </button>
+
+        <!-- Botones Finales del Paso 4 -->
+        <button type="button" class="btn-action btn-whatsapp" id="btnWa" onclick="enviarWhatsApp()" style="display: none;">
+          💬 Notificar por WhatsApp
+        </button>
+
+        <button type="button" class="btn-action btn-sheets" id="btnSheets" onclick="enviarGoogleSheets()" style="display: none;">
+          ☁️ Guardar en Google Sheets
+        </button>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+<script>
+  // ==========================================
+  // CONFIGURACIÓN DE CONEXIÓN
+  // ==========================================
+  const URL_GOOGLE_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbz-X2F14hQwd_2xpOrlOiXNPVuySlZIjirDVmA3_IMAOsDqKxPjqgOW3hAEm86Yy66lzg/exec"; // Pega aquí tu enlace de Apps Script
+  const TELEFONO_WHATSAPP_SUPERVISOR = "573234190158"; // Tu WhatsApp con código internacional
+
+  // Fecha y hora actual automática
+  const fechaActual = new Date();
+  document.getElementById('fecha').value = fechaActual.toISOString().split('T')[0];
+  document.getElementById('hora').value = fechaActual.toTimeString().slice(0, 5);
+
+  // Navegación por Pasos (Wizard)
+  let pasoActual = 1;
+  const totalPasos = 4;
+
+  function actualizarVistaWizard() {
+    for (let i = 1; i <= totalPasos; i++) {
+      const tab = document.getElementById(`paso${i}`);
+      const stepNav = document.querySelectorAll('.step-item')[i - 1];
+      if (tab) tab.classList.toggle('active', i === pasoActual);
+      if (stepNav) {
+        stepNav.classList.toggle('active', i === pasoActual);
+        stepNav.classList.toggle('completed', i < pasoActual);
+      }
+    }
+
+    document.getElementById('btnAnterior').style.display = pasoActual > 1 ? 'inline-flex' : 'none';
+    
+    if (pasoActual === totalPasos) {
+      document.getElementById('btnSiguiente').style.display = 'none';
+      document.getElementById('btnWa').style.display = 'inline-flex';
+      document.getElementById('btnSheets').style.display = 'inline-flex';
+      setTimeout(ajustarCanvasFirma, 100);
+    } else {
+      document.getElementById('btnSiguiente').style.display = 'inline-flex';
+      document.getElementById('btnWa').style.display = 'none';
+      document.getElementById('btnSheets').style.display = 'none';
+    }
+  }
+
+  function avanzarPaso() {
+    if (pasoActual === 1) {
+      const mec = document.getElementById('mecanico').value.trim();
+      const hor = document.getElementById('horometro').value.trim();
+      const mod = document.getElementById('modelo').value.trim();
+      if (!mec || !hor || !mod) {
+        alert("Por favor diligencie los campos obligatorios: Mecánico, Modelo y Horómetro.");
+        return;
+      }
+    }
+    if (pasoActual < totalPasos) {
+      pasoActual++;
+      actualizarVistaWizard();
+    }
+  }
+
+  function retrocederPaso() {
+    if (pasoActual > 1) {
+      pasoActual--;
+      actualizarVistaWizard();
+    }
+  }
+
+  function irAlPaso(n) {
+    if (n <= pasoActual || (document.getElementById('mecanico').value && document.getElementById('horometro').value)) {
+      pasoActual = n;
+      actualizarVistaWizard();
+    }
+  }
+
+  // Puntos de engrase dinámicos de la Hoja 3
+  const engrasePorEquipo = {
+    "Excavadoras y Tractores": [
+      "Pasadores y bujes del cucharón / balde",
+      "Pivotes de pluma y cilindros de levante",
+      "Tornamesa y rodamiento de giro general",
+      "Ruedas guía, rodillos superiores e inferiores",
+      "Cilindros de volteo y brazos de empuje"
+    ],
+    "Camiones": [
+      "Crucetas de cardán y puente de transmisión",
+      "Terminales y barras de dirección",
+      "Pasadores de muelles / ballestas y suspensiones",
+      "Mecanismo de volteo / quinta rueda",
+      "Ajustadores de freno (matracas)"
+    ],
+    "Vibrocompactadores": [
+      "Articulación central del chasis",
+      "Pivotes de cilindros de dirección",
+      "Rodamientos y chumaceras del tambor (rola)",
+      "Puntos de montaje del motor vibratorio"
+    ],
+    "Motoniveladora y Retroexcavadoras": [
+      "Círculo de giro y barra de tiro",
+      "Inclinación de ruedas delanteras y dirección",
+      "Pivotes de tornamesa y balde frontal",
+      "Articulación de brazo de retroexcavadora",
+      "Estabilizadores hidráulicos traseros"
+    ]
+  };
+
+  function renderizarEngrase() {
+    const sel = document.getElementById('tipoEquipo').value;
+    const items = engrasePorEquipo[sel] || [];
+    const cont = document.getElementById('contenedorEngrase');
+    cont.innerHTML = items.map(p => `
+      <label class="check-card">
+        <input type="checkbox" name="puntosEngrase" value="${p}">
+        <span>${p}</span>
+      </label>
+    `).join('');
+  }
+  renderizarEngrase();
+
+  // Módulo de Firma Digital en Canvas
+  const canvas = document.getElementById('signatureCanvas');
+  const ctx = canvas.getContext('2d');
+  let dibujando = false;
+  let firmaHecha = false;
+
+  function ajustarCanvasFirma() {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width > 0) {
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#090d16';
+    }
+  }
+  window.addEventListener('resize', ajustarCanvasFirma);
+
+  function obtenerCoordenadas(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: cx - rect.left, y: cy - rect.top };
+  }
+
+  function iniciarFirma(e) {
+    dibujando = true;
+    firmaHecha = true;
+    const pt = obtenerCoordenadas(e);
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y);
+    e.preventDefault();
+  }
+
+  function moverFirma(e) {
+    if (!dibujando) return;
+    const pt = obtenerCoordenadas(e);
+    ctx.lineTo(pt.x, pt.y);
+    ctx.stroke();
+    e.preventDefault();
+  }
+
+  function terminarFirma() { dibujando = false; }
+
+  function limpiarFirma() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    firmaHecha = false;
+  }
+
+  canvas.addEventListener('mousedown', iniciarFirma);
+  canvas.addEventListener('mousemove', moverFirma);
+  window.addEventListener('mouseup', terminarFirma);
+  canvas.addEventListener('touchstart', iniciarFirma, { passive: false });
+  canvas.addEventListener('touchmove', moverFirma, { passive: false });
+  window.addEventListener('touchend', terminarFirma);
+
+  // Recopilación de Información
+  function recolectarDatos() {
+    const obtenerChecks = (nom) => Array.from(document.querySelectorAll(`input[name="${nom}"]:checked`)).map(c => c.value);
+    return {
+      fecha: document.getElementById('fecha').value,
+      hora: document.getElementById('hora').value,
+      mecanico: document.getElementById('mecanico').value,
+      tipoEquipo: document.getElementById('tipoEquipo').value,
+      marca: document.getElementById('marca').value,
+      modelo: document.getElementById('modelo').value,
+      horometro: document.getElementById('horometro').value,
+      tipoPm: document.getElementById('tipoPm').value,
+      asignacion: document.getElementById('asignacion').value,
+      serieEquipo: document.getElementById('serieEquipo').value,
+      serieMotor: document.getElementById('serieMotor').value,
+      inspeccion: obtenerChecks('inspeccion'),
+      tareasPm: obtenerChecks('tareasPm'),
+      puntosEngrase: obtenerChecks('puntosEngrase'),
+      observaciones: document.getElementById('observaciones').value,
+      firma: firmaHecha ? canvas.toDataURL('image/png') : ''
+    };
+  }
+
+  // 1. Envío a Google Sheets
+ async function enviarGoogleSheets() {
+    if (!firmaHecha) {
+      alert("Por favor trace su firma en el panel digital antes de enviar.");
+      return;
+    }
+    if (URL_GOOGLE_APPS_SCRIPT.includes("TU_URL")) {
+      alert("Por favor configure la URL de Apps Script.");
+      return;
+    }
+
+    const banner = document.getElementById('alertBanner');
+    const btn = document.getElementById('btnSheets');
+    btn.disabled = true;
+    banner.className = "alert-banner loading";
+    banner.style.display = "block";
+    banner.innerText = "⏳ Guardando reporte en Google Sheets...";
+
+    try {
+      const payload = recolectarDatos();
+      
+      // Enviamos como texto plano para evitar bloqueos de CORS en Google Apps Script
+      await fetch(URL_GOOGLE_APPS_SCRIPT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      banner.className = "alert-banner success";
+      banner.innerText = "✅ ¡Reporte guardado con éxito en Google Sheets!";
+      
+      setTimeout(() => {
+        if (confirm("¿Desea enviar una copia formateada por WhatsApp al supervisor?")) {
+          enviarWhatsApp();
+        }
+      }, 600);
+    } catch (err) {
+      console.error(err);
+      banner.style.background = "rgba(239, 68, 68, 0.2)";
+      banner.style.color = "#fca5a5";
+      banner.innerText = "❌ Error al conectar. Revise la consola del navegador.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // 2. Envío directo a WhatsApp
+ // 2. Envío a WhatsApp con emojis universales (String.fromCodePoint)
+  function enviarWhatsApp() {
+    const d = recolectarDatos();
+    if (!d.mecanico || !d.horometro || !d.modelo) {
+      alert("Por favor complete los campos obligatorios: Mecánico, Horómetro y Modelo.");
+      return;
+    }
+
+    // Rombos de color mediante código seguro
+    const rAzul  = "🔹"; // Rombos para datos y checks exitosos
+    const rRojo  = "🔸"; // Rombo llamativo para pendientes/alertas
+
+    // Cabecera y separadores medidos para evitar cortes en pantallas angostas
+    const sepDoble  = "══════════════════════";
+    const sepSimple = "──────────────────────";
+
+    const lineaFirma = firmaHecha ? `${rAzul} REGISTRADA` : `${rRojo} PENDIENTE`;
+
+    const lineas = [
+      sepDoble,
+      "📌 *REPORTE TÉCNICO MYT*",
+      "🏢 _Soluciones e Ingeniería_",
+      "📄 Formato: *FR:GM-01*",
+      sepDoble,
+      "",
+      `${rAzul} *Fecha:* ${d.fecha} (${d.hora})`,
+      `${rAzul} *Mecánico:* ${d.mecanico}`,
+      `${rAzul} *Equipo:* ${d.tipoEquipo}`,
+      `${rAzul} *Marca/Mod:* ${d.marca} ${d.modelo}`,
+      `${rAzul} *Horómetro:* ${d.horometro} H`,
+      `${rAzul} *Protocolo:* ${d.tipoPm}`,
+      `${rAzul} *Asignación:* Clase ${d.asignacion}`,
+      `${rAzul} *S/N Chasis:* ${d.serieEquipo || 'N/A'}`,
+      `${rAzul} *S/N Motor:* ${d.serieMotor || 'N/A'}`,
+      "",
+      sepSimple,
+      "📋 *RESUMEN DE SERVICIO*",
+      sepSimple,
+      `${rAzul} *Pre-operac:* ${d.inspeccion.length} validados`,
+      `${rAzul} *Tareas PM:* ${d.tareasPm.length} filtros/aceites`,
+      `${rAzul} *Engrase:* ${d.puntosEngrase.length} puntos`,
+      `${rRojo} *Pendientes:* ${d.observaciones ? d.observaciones : 'Ninguno (Operativo)'}`,
+      `${rAzul} *Firma:* ${lineaFirma}`,
+      sepDoble
+    ];
+
+    const mensajeFinal = encodeURIComponent(lineas.join("\n"));
+    const linkWa = "https://api.whatsapp.com/send?phone=573234190158&text=" + mensajeFinal;
+    window.open(linkWa, '_blank');
+  }
+</script>
+
+</body>
+</html>
